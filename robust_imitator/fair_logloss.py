@@ -70,24 +70,6 @@ def _dot_intercept(w, X):
     https://github.com/scikit-learn/scikit-learn/blob/master/sklearn/linear_model/logistic.py
 
     """
-#    w2 = w[np.newaxis,:]
-#    X2 = X[np.newaxis,:]
-#
-#    if len(X2.shape)>2:
-#        c = 0
-#        if w.size == X.shape[1] + 1:
-#            c = w[-1]
-#            w = w[:-1]
-#
-#        z = np.dot(X, w) + c
-#    else:
-#        c = 0
-#        if w2.size == X2.shape[1] + 1:
-#            c = w2[0,-1]
-#            w3 = w2[0,:-1]
-#
-#        z = np.dot(X, w3) + c
-#    return z
     c = float(0)
     if w.size == X.shape[1] + 1:
         c = w[-1]

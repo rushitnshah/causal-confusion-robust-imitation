@@ -69,9 +69,9 @@ if __name__ == '__main__':
     # https://github.com/openai/gym/wiki/MountainCar-v0
     environment_name = 'MountainCar-v0'
     environment = gym.make(environment_name)
-    # environment.seed(0)
-    # np.random.seed(0)
-    # run with render=True for visualization
+    environment.seed(0)
+    np.random.seed(0)
+
     reward_list = []
     steps_list = []
 

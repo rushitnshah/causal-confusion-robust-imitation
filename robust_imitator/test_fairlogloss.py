@@ -10,43 +10,20 @@ from fair_logloss import DP_fair_logloss_classifier, EOPP_fair_logloss_classifie
 import pickle
 
 def compute_error(Yhat,proba,Y):
-    err = 1 - np.sum(Yhat == Y) / Y.shape[0] 
+    err = 1 - np.sum(Yhat == Y) / Y.shape[0]
     exp_zeroone = np.mean(np.where(Y == 1 , 1 - proba, proba))
     return err, exp_zeroone
 
 if __name__ == '__main__':
     dataset = 'mountaincar'
-    dataA,dataY,dataX,perm = prepare_mountain_car()   
-#    dataset = ""
-#    if sys.argv[1] == 'adult':
-#        dataA,dataY,dataX,perm = prepare_IBM_adult()
-#        dataset = 'adult'
-#    elif sys.argv[1] == 'compas':
-#        dataA,dataY,dataX,perm = prepare_compas()
-#        dataset = 'compas'
-#    elif sys.argv[1] == 'law':
-#        dataA,dataY,dataX,perm = prepare_law()
-#        dataset = 'law'
-#    elif sys.argv[1] == 'mountaincar':
-#         dataA,dataY,dataX,perm = prepare_mountain_car()
-#         dataset = 'mountaincar'
-#    else:
-#        raise ValueError('Invalid first arg')
+    dataA,dataY,dataX,perm = prepare_mountain_car()
     C = .005
     criteria = 'dp'
     h = DP_fair_logloss_classifier(C=C, random_initialization=True, verbose=False)
-#    criteria = sys.argv[2]
-#    if criteria == 'dp':
-#        h = DP_fair_logloss_classifier(C=C, random_initialization=True, verbose=False)
-#    elif criteria == 'eqopp':
-#        h = EOPP_fair_logloss_classifier(C=C, random_initialization=True, verbose=False)
-#    elif criteria == 'eqodd':
-#        h = EODD_fair_logloss_classifier(C=C, random_initialization=True, verbose=False)    
-#    else:
-#        raise ValueError('Invalid second arg')
+
     filename_tr = "results/fairll_{}_{:.3f}_{}_tr.csv".format(dataset,C,criteria)
     filename_ts = "results/fairll_{}_{:.3f}_{}_ts.csv".format(dataset,C,criteria)
-    
+
     outfile_tr = open(filename_tr,"w")
     outfile_ts = open(filename_ts,"w")
 
@@ -57,14 +34,14 @@ if __name__ == '__main__':
         ts_idx = order[tr_sz:]
         tr_X = dataX.reindex(tr_idx)
         ts_X = dataX.reindex(ts_idx)
-        
+
         tr_A = dataA.reindex(tr_X.index)
         ts_A = dataA.reindex(ts_X.index)
         tr_Y = dataY.reindex(tr_X.index)
         ts_Y = dataY.reindex(ts_X.index)
-        
+
         # Comment out to not include A in features
-        tr_X = pd.concat([tr_X, tr_A], axis=1) 	
+        tr_X = pd.concat([tr_X, tr_A], axis=1)
         ts_X = pd.concat([ts_X, ts_A], axis=1)
         # ---------
 
@@ -74,9 +51,9 @@ if __name__ == '__main__':
                 s = tr_X[c].std(ddof=0)
                 tr_X.loc[:,c] = (tr_X[c] - mu) / s
                 ts_X.loc[:,c] = (ts_X[c] - mu) / s
-        
+
         print("---------------------------- Random Split %d ----------------------------------" % (r + 1))
-        print("Training - Iteration {0}".format(r+1))
+        print("Training...")
         h.fit(tr_X.values,tr_Y.values,tr_A.values)
         print("Done!")
         print()
@@ -92,10 +69,10 @@ if __name__ == '__main__':
 
         outfile_ts.write("{:.4f},{:.4f},{:.4f}\n".format(exp_zo_ts,err_ts, violation_ts))
         outfile_tr.write("{:.4f},{:.4f},{:.4f}\n".format(exp_zo_tr,err_tr, violation_tr))
-        
+
     outfile_tr.close()
     outfile_ts.close()
-    
+
     # save the model to disk
     filename = 'fair_lr_model.sav'
     pickle.dump(h, open(filename, 'wb'))

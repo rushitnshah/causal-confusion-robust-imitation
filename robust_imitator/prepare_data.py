@@ -9,8 +9,6 @@ def getCSVFromArff(fileName):
 
     with open(fileName + '.arff', 'r') as fin:
         data = fin.read().splitlines(True)
-    
-    
     i = 0
     cols = []
     for line in data:
@@ -25,9 +23,9 @@ def getCSVFromArff(fileName):
                     cols.append(line[11:line.index('{')-1])
                 else:
                     cols.append(line[11:line.index('numeric')-1])
-    
+
     headers = ",".join(cols)
-    
+
     with open(fileName + '.csv', 'w') as fout:
         fout.write(headers)
         fout.write('\n')
@@ -39,7 +37,7 @@ class DataFrameImputer(TransformerMixin):
     def __init__(self):
         """Impute missing values.
 
-        Columns of dtype object are imputed with the most frequent value 
+        Columns of dtype object are imputed with the most frequent value
         in column.
 
         Columns of other types are imputed with mean of column.
@@ -65,7 +63,7 @@ def prepare_law():
 	dataY = pd.read_csv(filePath + 'law_Y.csv',sep='\t',index_col = 0,header=None)#,usecols=range(0,2))
 	dataX = pd.read_csv(filePath + 'law_X.csv',sep='\t',index_col = 0)
 	perm = np.genfromtxt(filePath + 'law_perm.csv', delimiter=',')
-    
+
 	return dataA.iloc[:,0],dataY.iloc[:,0],dataX,perm
 
 def prepare_compas():
@@ -76,8 +74,8 @@ def prepare_compas():
 	dataY = pd.read_csv(filePath + 'IBM_compas_Y.csv',sep='\t',index_col = 0,header=None)#,usecols=range(0,2))
 	dataX = pd.read_csv(filePath + 'IBM_compas_X.csv',sep='\t',index_col = 0)
 	perm = np.genfromtxt(filePath + 'compas_perm.csv', delimiter=',')
-    
-	return dataA.iloc[:,0],dataY.iloc[:,0],dataX,perm       
+
+	return dataA.iloc[:,0],dataY.iloc[:,0],dataX,perm
 
 def prepare_IBM_adult():
     filePath = 'datasets/A,Y,X/IBM_adult/'
@@ -86,7 +84,7 @@ def prepare_IBM_adult():
     dataY = pd.read_csv(filePath + 'IBM_adult_Y.csv',sep='\t',index_col = 0,header=None)#,usecols=range(0,2))
     dataX = pd.read_csv(filePath + 'IBM_adult_X.csv',sep='\t',index_col = 0)
     perm = np.genfromtxt(filePath + 'adult_perm.csv', delimiter=',')
-    return dataA.iloc[:,0],dataY.iloc[:,0],dataX,perm 
+    return dataA.iloc[:,0],dataY.iloc[:,0],dataX,perm
 
 def prepare_mountain_car():
     data = np.load("/home/baxter2/Desktop/causal_confusion/custom/Qlearning_MountainCar/expert_data_2019_10_30_16_20.npy")
@@ -95,9 +93,9 @@ def prepare_mountain_car():
     """With confounding variable"""
     X1 = data[:,0:3]
     y = data[:,3]
-    
+
     #Fair classification is compatible with only binary right now, remove action '1'
-    # which corresponds to "no push" 
+    # which corresponds to "no push"
     idx  = np.where(y==1)[0]
     mask = np.ones(len(y), dtype=bool)
     mask[idx] = False
@@ -108,13 +106,13 @@ def prepare_mountain_car():
     mask[idx] = False
     y = y[mask,]
     X1 = X1[mask,:]
-    
+
     #Changing 2 to 1
     idx =  np.where(y==2)[0]
     y[idx] = 1
     idx = np.where(X1[:,2]==2)[0]
     X1[idx,2] = 1
-    
+
     dataX = pd.DataFrame({'Column1': X1[:, 0], 'Column2': X1[:, 1]})
     dataA = pd.DataFrame({'1': X1[:, 2]})
     dataY = pd.DataFrame({'1': y[:,]})
@@ -124,6 +122,5 @@ def prepare_mountain_car():
         np.random.shuffle(temp)
         perm.append(temp)
     perm = np.asarray(perm,dtype=np.float64)
-    
-    return dataA.iloc[:,0],dataY.iloc[:,0],dataX,perm 
 
+    return dataA.iloc[:,0],dataY.iloc[:,0],dataX,perm

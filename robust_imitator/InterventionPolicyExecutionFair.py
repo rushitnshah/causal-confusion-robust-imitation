@@ -104,8 +104,8 @@ if __name__ == '__main__':
     # https://github.com/openai/gym/wiki/MountainCar-v0
     environment_name = 'MountainCar-v0'
     environment = gym.make(environment_name)
-    # environment.seed(0)
-    # np.random.seed(0)
+    environment.seed(0)
+    np.random.seed(0)
     # run with render=True for visualization
     reward_list = []
     steps_list = []
@@ -122,7 +122,7 @@ if __name__ == '__main__':
 
         reward = np.mean(ep_reward_list)
         rewards.append(reward)
-        
+
 
         trace.append(
                 {
@@ -133,17 +133,4 @@ if __name__ == '__main__':
                 }
             )
         pprint(trace[-1])
-        # steps_list.append(steps)
-        # reward_list.append(reward)
-        # print("Inital Observation: "+str(init_obs)+"    Total Reward: "+ str(reward)+"    Total Steps Taken: "+str(steps))
     environment.close()
-
-    # print("Final Mean Reward:  "+str(np.mean(np.asarray(reward_list))) + "Final Mean Steps:  "+str(np.mean(np.asarray(steps_list))))
-
-
-    ## Save the data
-    # print("Length of data = " + str(len(data)))
-    # date_obj = datetime.today()
-    # time_str = str(date_obj.year)+"_"+str(date_obj.month)+"_"+str(date_obj.day)+"_"+str(date_obj.hour)+"_"+str(date_obj.minute)
-    # filename = "/home/baxter2/Desktop/causal_confusion/custom/Qlearning_MountainCar/expert_data_"+time_str
-    # np.save(filename,np.asarray(data))
